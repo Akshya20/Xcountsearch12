@@ -8,7 +8,7 @@ const Card = ({flag,name}) => {
     textAlign:"center",
     border:"2px solid black",
     borderRadius:"5px",
-    padding:"20px",
+    padding:"10px",
     width:"200px",
     height:"200px"}}>
         <img src={flag} alt="countryflag" style={{
@@ -26,7 +26,7 @@ function Countries(){
     const [countries,setcountries]=useState([])
     console.log(countries);
     useEffect(() =>{
-        fetch(API_ENDPOINT).then(res => res.json()).then(data => setcountries(data)).catch()
+        fetch(API_ENDPOINT).then(res => res.json()).then(data => setcountries(data)).catch((error)=> console.log(error),"error")
     },[])
     return (
         <div style={{display:"flex",flexWrap:"wrap",gap:"10px"}}>
