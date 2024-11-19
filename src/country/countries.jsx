@@ -1,40 +1,68 @@
 import { useEffect, useState } from "react";
+import styles from "./country.module.css"
 
-const Card = ({flag,name}) => {
-    return <div style={{display:"flex",
-        flexDirection:"column",
-    justifyContent:"center",
-    alignItems:"center",
-    textAlign:"center",
-    border:"2px solid black",
-    borderRadius:"5px",
-    padding:"10px",
-    width:"200px",
-    height:"200px"}}>
-        <img src={flag} alt="countryflag" style={{
-            width:"100px",height:"100px"
-        }}/>
-        <h2>{name}</h2>
-    </div>
+const Card = ({ flags, name }) => {
+    return (
+        <div
+            className={styles.Countrycard}
+        >
+            <img
+                src={flags?.png || "https://via.placeholder.com/100"} // Fallback to placeholder image
+                alt="country flag"
+                style={{
+                    width: "100px",
+                    height: "100px",
+                }}
+            />
+            <h2>{name?.common || "Unknown Country"}</h2> {/* Fallback to "Unknown Country" */}
+        </div>
+    );
 };
 
+function Countries() {
+    const API_ENDPOINT = "https://restcountries.com/v3.1/all";
+    const [countries, setCountries] = useState([]);
+    const [searchquery,setsearchquery]=useState("");
+    const [filteredcountries,setfilteredcountries]=useState([]);
 
+    useEffect(() => {
+        fetch(API_ENDPOINT)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data); 
+                setCountries(data);
+                setfilteredcountries(data);
+            })
+            .catch((error) => console.log("Error fetching data:", error));
+    }, []);
 
+    useEffect(() => {
+        setfilteredcountries(
+            countries.filter((country) => 
+                country.name.common.toLowerCase().includes(searchquery.toLowerCase())
+            )
+        );
+    },[countries,searchquery]);
 
-function Countries(){
-    const API_ENDPOINT =" https://xcountries-backend.azurewebsites.net/all "
-    const [countries,setcountries]=useState([])
-    console.log(countries);
-    useEffect(() =>{
-        fetch(API_ENDPOINT).then(res => res.json()).then(data => setcountries(data)).catch((error)=> console.log(error),"error")
-    },[])
     return (
-        <div style={{display:"flex",flexWrap:"wrap",gap:"10px"}}>
-        {countries.map(({flag,name}) => (
-            <Card key={name} flag={flag} name={name}/>
-            ))}
-    </div>
+        <div>
+            <input type="text" value={searchquery} onChange={(e) => {
+                setsearchquery(e.target.value)
+            }}></input>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            
+            {filteredcountries
+                .filter((country) => country.flags && country.name) 
+                .map((country) => (
+                    <Card
+                        key={country.cca3} 
+                        flags={country.flags}
+                        name={country.name}
+                    />
+                ))}
+        </div>
+        </div>
     );
 }
 
-export default Countries
+export default Countries;
