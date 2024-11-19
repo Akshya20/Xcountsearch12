@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import styles from "./country.module.css"
+import "./country.css";
 
 const Card = ({ flags, name }) => {
     return (
         <div
-            className={styles.Countrycard}
+            className="countryCard"
         >
             <img
                 src={flags?.png || "https://via.placeholder.com/100"} // Fallback to placeholder image
